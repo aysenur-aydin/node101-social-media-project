@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <%- include("./partials/head.ejs") %>
+
+  <body>
+    <div class="main-content small">
+      <h1 class="page-title">Create a Post</h1>
+      <div class="form-wrapper">
+        <form action="/post/create" method="POST">
+          <label for="url">Picture url</label>
+          <input type="url" name="url" id="url" />
+          <textarea
+            name="content"
+            rows="5"
+            cols="40"
+            placeholder="Write something..."
+          ></textarea>
+          <button type="submit" class="btn">Post</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
