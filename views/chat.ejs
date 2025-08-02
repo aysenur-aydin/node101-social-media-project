@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <%- include("./partials/head.ejs") %>
+
+  <body>
+    <div class="main-content">
+      <a href="/feed" class="nav-link">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span>Go back</span>
+      </a>
+      <h1 class="page-title">Messages</h1>
+      <div class="chat-screen-wrapper">
+        <aside class="chat-history-wrapper">
+          <ul class="chat-history-list">
+            <% if (friends.length > 0) { %> <% friends.forEach(friend => { %>
+            <li class="chat-card">
+              <img
+                src="<%= friend.profileImage %>"
+                alt="<%= friend.username %>"
+                class="chat-avatar"
+              />
+              <span class="chat-username"><%= friend.username %></span>
+            </li>
+            <% }); %> <% } else { %>
+            <p class="no-message">No messages</p>
+            <% } %>
+          </ul>
+        </aside>
+        <div class="chat-form-wrapper">
+          <ul id="messages-container" class="messages-container">
+            <!-- Messages come here -->
+          </ul>
+
+          <form id="chat-form" class="chat-form" action="">
+            <input id="chat-input" autocomplete="off" class="chat-input" />
+            <button class="chat-send-btn">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const currentUserId = '<%= user._id %>';
+      const currentUsername = '<%= user.username || "-" %>';
+
+      const form = document.getElementById('chat-form');
+      const input = document.getElementById('chat-input');
+      const messages = document.getElementById('messages-container');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat-message', input.value, (serverResponse) => {
+            console.log('Server replied:', serverResponse);
+          }); // send to server
+          input.value = '';
+        }
+      });
+
+      // listen for 'chat message' event (receive data from server)
+      socket.on('chat-message', (message) => {
+        const item = document.createElement('li');
+        const messageTime = new Date(message.createdAt).toLocaleTimeString();
+        const isMine = message.senderId === currentUserId;
+
+        item.className = isMine ? 'message-right' : 'message-left';
+
+        item.innerHTML = `
+         <div class="message-wrapper">
+            <span class="message-sender">${
+              isMine ? '' : message.senderUsername
+            }</span>
+            <p> ${message.text}</p>
+            <span class="message-time">${messageTime}</span>
+          </div>
+        `;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
+  </body>
+</html>
