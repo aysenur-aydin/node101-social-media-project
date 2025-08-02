@@ -19,6 +19,7 @@ export const auth_login_post = async (req, res) => {
 
     // Login success
     req.session.userId = user._id;
+    req.session.username = user.username;
 
     res.status(200).redirect('/feed');
   } catch (err) {

@@ -112,23 +112,32 @@ ul.horizontal {
 .profile-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
 }
 
-.create-post-link {
+.nav-link {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 8px;
 }
 
-.profile-picture {
+.feed-picture {
   width: 40px;
   height: 40px;
   margin: 3px;
   object-fit: cover;
   border-radius: 50%;
   border: none;
+}
+
+.profile-picture {
+  width: 80px;
+  height: 80px;
+  margin: 3px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .post-body {

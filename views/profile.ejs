@@ -4,11 +4,19 @@
   <body>
     <div class="main-content small">
       <div class="profile-header">
-        <a href="/feed">
+        <a href="/feed" class="nav-link">
           <span class="material-symbols-outlined">arrow_back</span>
           <span>Go back</span>
         </a>
         <h1>Profile</h1>
+        <div class="profile-wrapper">
+          <img
+            src="<%= user.profileImage %>"
+            alt="Profile Picture"
+            class="profile-picture"
+          />
+        </div>
+
         <label for="email">Username</label>
         <input
           type="text"

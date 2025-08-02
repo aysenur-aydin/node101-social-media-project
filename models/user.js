@@ -16,6 +16,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    profileImage: {
+      type: String,
+      default:
+        'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
+    },
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   { timestamps: true }
 );
