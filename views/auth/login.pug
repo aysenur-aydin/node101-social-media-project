@@ -1,0 +1,12 @@
+extends layout.pug
+
+block content
+    h1 Login
+    form(action="/auth/login" method="post")
+      label(for="email") Email
+      input(type="email" id="email" name="email" required)
+      label(for="password") Password
+      input(type="password" id="password" name="password" required)
+      button(type="submit" class="btn") Login
+    p Don't you have an account yet? 
+      a(href="/auth/sign-up") Register

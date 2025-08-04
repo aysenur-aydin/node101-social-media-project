@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+  include ./partials/head.pug
+  body
+    .main-content.small
+      .profile-header
+        a.nav-link(href="/feed")
+          span.material-symbols-outlined arrow_back
+          span Go back
+        h1 Profile
+        .profile-wrapper
+          img.profile-picture(src=user.profileImage alt="Profile Picture")
+
+      label(for="email") Username
+      input(
+        type="text"
+        id="username"
+        name="username"
+        readonly
+        disabled
+        value=user.username
+      )
+      label(for="email") Email
+      input(
+        type="email"
+        id="email"
+        name="email"
+        readonly
+        disabled
+        value=user.email
+      )

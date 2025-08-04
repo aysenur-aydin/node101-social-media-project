@@ -1,0 +1,31 @@
+doctype html
+html
+  include ./partials/head.pug
+  body
+    .main-content
+      a.nav-link(href="/feed")
+        span.material-symbols-outlined arrow_back
+        span Go back
+      h1.page-title Messages
+      .chat-screen-wrapper
+        aside.chat-history-wrapper
+          ul.chat-history-list
+            //- if friends.length > 0
+            //-   each friend in friends
+            //-     li.chat-card
+            //-       img.chat-avatar(src=friend.profileImage alt=friend.username)
+            //-       span.chat-username= friend.username
+            //- else
+            //-   p.no-message No messages
+
+        .chat-form-wrapper
+          ul#messages-container.messages-container
+            //- Messages will be inserted here dynamically
+
+          form#chat-form.chat-form(action="")
+            input#chat-input.chat-input(autocomplete="off")
+            button.chat-send-btn Send
+            
+    script(src="/socket.io/socket.io.js")
+    script(src="/js/chat.js" data-user-id=user._id data-username=user.username) 
+   

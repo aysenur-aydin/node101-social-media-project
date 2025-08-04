@@ -1,0 +1,15 @@
+doctype html
+html
+  include ./partials/head.pug
+  body
+    .main-content.small
+        a.nav-link(href="/feed")
+            span.material-symbols-outlined arrow_back
+            span Go back
+        h1.page-title Create a Post
+        .form-wrapper
+            form(action="/post/create" method="POST")
+            label(for="url") Picture url
+            input(type="url" name="url" id="url")
+            textarea(name="content" rows="5" cols="40" placeholder="Write something...")
+            button.btn(type="submit") Post

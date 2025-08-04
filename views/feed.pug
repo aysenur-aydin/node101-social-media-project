@@ -1,0 +1,33 @@
+doctype html
+html(lang="en")
+  include ./partials/head.pug
+  body
+    .main-content
+      .header
+        .profile-wrapper
+          img.feed-picture(src=user.profileImage alt="Profile Picture")
+          .profile-info
+            a(href="/profile")
+              p= user.username
+        .feed-nav-wrapper
+          a.nav-link(href="/chat")
+            span.material-symbols-outlined chat
+            |  Chat
+          a.nav-link(href="/post/create")
+            span.material-symbols-outlined add
+            | Create a post
+
+      .feed-wrapper
+        each post in posts
+          .post-wrapper
+            .post-header
+              .profile-wrapper
+                img.feed-picture(src=user.profileImage alt="Profile Picture")
+                .profile-info
+                  p= post.author.username
+            .post-body
+              if post.url
+                img(src=post.url alt="Post Image")
+              .post-info
+                p= post.content
+                small= post.createdAt.toLocaleString()
