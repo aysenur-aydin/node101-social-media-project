@@ -16,6 +16,9 @@ html(lang="en")
           a.nav-link(href="/post/create")
             span.material-symbols-outlined add
             | Create a post
+          a.nav-link(href="/auth/logout" style="color:red")
+            span.material-symbols-outlined logout
+            | Logout
 
       .feed-wrapper
         each post in posts

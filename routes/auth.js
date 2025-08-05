@@ -4,6 +4,7 @@ import {
   auth_login_post,
   auth_sign_up_get,
   auth_sign_up_post,
+  auth_logout_get,
 } from '../controllers/auth.js';
 
 const router = express.Router();
@@ -16,6 +17,6 @@ router.get('/sign-up', auth_sign_up_get);
 
 router.post('/sign-up', auth_sign_up_post);
 
+router.get('/logout', auth_logout_get);
+
 export default router;
-
-

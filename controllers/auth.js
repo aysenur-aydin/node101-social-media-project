@@ -45,3 +45,15 @@ export const auth_sign_up_post = (req, res) => {
       console.log(err);
     });
 };
+
+export const auth_logout_get = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Session destruction error:', err);
+      return res.status(500).send('Could not log out');
+    }
+    // Clear the session cookie (default express cookie name is 'connect.sid')
+    res.clearCookie('connect.sid');
+    res.redirect('/auth/login');
+  });
+};
