@@ -137,6 +137,9 @@ app.get('/', (req, res) => {
 
 app.get('/feed', async (req, res) => {
   const userId = req.session.userId;
+  if (!userId) {
+    return res.redirect('/auth/login');
+  }
   const user = await User.findById(userId);
   const posts = await Post.find().populate('author').sort({ createdAt: -1 });
   res.render('feed', { title: 'Feed', user, posts });
