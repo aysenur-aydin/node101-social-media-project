@@ -55,7 +55,10 @@ const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }, // false is for development (http)
+  cookie: {
+    secure: false, // false is for development (http)
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  },
 });
 
 app.use(sessionMiddleware);
@@ -95,14 +98,23 @@ io.on('connection', (socket) => {
     // Emit the message to the sender
     const receiverSocketId = onlineUsers.get(toUserId);
     if (receiverSocketId) {
-      console.log('server receiver id is online: ', senderUserId, message);
       io.to(receiverSocketId).emit('new_private_message', {
         fromUserId: senderUserId,
         fromUsername: senderUsername,
+        isMine: false,
         message: message,
         createdAt: newMessage.createdAt,
       });
     }
+
+    // Emit the message to the sender
+    socket.emit('new_private_message', {
+      fromUserId: senderUserId,
+      fromUsername: senderUsername,
+      isMine: true,
+      message: message,
+      createdAt: newMessage.createdAt,
+    });
   });
 
   // Disconnect

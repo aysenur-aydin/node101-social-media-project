@@ -27,14 +27,12 @@ function renderMessages(messages) {
 async function loadChatHistory(element, toUserId) {
   messageContainer.innerHTML = '';
   form.dataset.toUserId = toUserId;
-  console.log(`Selected friend ID: ${toUserId}`);
   document.querySelectorAll('.chat-card').forEach((el) => el.classList.remove('active'));
   element.classList.add('active');
 
   const response = await fetch(`/chat/messages?friendId=${toUserId}`);
   const messages = await response.json();
 
-  // Mesajları ekranda göster
   if (messages.length > 0) {
     renderMessages(messages);
   }
@@ -53,15 +51,14 @@ form.addEventListener('submit', (e) => {
   }
 });
 
-socket.on('new_private_message', ({ fromUserId, fromUsername, message, createdAt }) => {
-  if (form.dataset.toUserId !== fromUserId) {
+socket.on('new_private_message', ({ fromUserId, fromUsername, isMine, message, createdAt }) => {
+  if (!isMine && form.dataset.toUserId !== fromUserId) {
     console.log(`A new message arrived from: ${fromUserId}`);
     return;
   }
   const item = document.createElement('li');
   const messageTime = new Date(createdAt).toLocaleTimeString();
-  const isMine = fromUserId === currentUserId;
-  console.log(fromUserId, message);
+
   item.className = isMine ? 'message-right' : 'message-left';
 
   item.innerHTML = `
