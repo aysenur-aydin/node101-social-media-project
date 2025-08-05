@@ -15,6 +15,7 @@ import chatRoutes from './routes/chat.js';
 
 import Post from './models/post.js';
 import User from './models/user.js';
+import Message from './models/message.js';
 
 // for .env file
 dotenv.config();
@@ -67,35 +68,48 @@ io.use((socket, next) => {
   sessionMiddleware(socket.request, {}, next);
 });
 
+const onlineUsers = new Map();
+
 io.on('connection', (socket) => {
   const session = socket.request.session;
+  const senderUserId = session?.userId;
+  const senderUsername = session?.username || 'Guest';
+
   console.log(
-    `Socket (User) ${socket.id} connected, session (userId):`,
+    `Socket (sockedId) ${socket.id} connected, session (userId):`,
     session?.userId,
     ' username:',
-    session?.username
+    senderUsername
   );
 
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  onlineUsers.set(senderUserId, socket.id);
+
+  socket.on('private_message', async ({ toUserId, message }) => {
+    const newMessage = new Message({
+      from: senderUserId,
+      to: toUserId,
+      text: message,
+    });
+    await newMessage.save();
+
+    // Emit the message to the sender
+    const receiverSocketId = onlineUsers.get(toUserId);
+    if (receiverSocketId) {
+      console.log('server receiver id is online: ', senderUserId, message);
+      io.to(receiverSocketId).emit('new_private_message', {
+        fromUserId: senderUserId,
+        fromUsername: senderUsername,
+        message: message,
+        createdAt: newMessage.createdAt,
+      });
+    }
   });
 
-  socket.on('chat-message', async (msg, callback) => {
-    const userId = socket.request.session?.userId;
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return callback({ status: 'error', message: 'Unauthorized' });
-    }
-
-    io.emit('chat-message', {
-      text: msg,
-      senderId: user._id.toString(),
-      senderUsername: user.username,
-      createdAt: new Date(),
+  // Disconnect
+  socket.on('disconnect', () => {
+    onlineUsers.forEach((value, key) => {
+      if (value === socket.id) onlineUsers.delete(key);
     });
-
-    callback({ status: 'ok' });
   });
 });
 

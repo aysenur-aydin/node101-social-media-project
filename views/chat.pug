@@ -10,13 +10,13 @@ html
       .chat-screen-wrapper
         aside.chat-history-wrapper
           ul.chat-history-list
-            //- if friends.length > 0
-            //-   each friend in friends
-            //-     li.chat-card
-            //-       img.chat-avatar(src=friend.profileImage alt=friend.username)
-            //-       span.chat-username= friend.username
-            //- else
-            //-   p.no-message No messages
+            if friends.length > 0
+              each friend in friends
+                li.chat-card(onClick=`loadChatHistory(this,'${friend._id}')`)
+                  img.chat-avatar(src=friend.profileImage alt=friend.username)
+                  span.chat-username= friend.username
+            else
+              p.no-message No friends found. Start chatting with someone!
 
         .chat-form-wrapper
           ul#messages-container.messages-container
@@ -25,7 +25,6 @@ html
           form#chat-form.chat-form(action="")
             input#chat-input.chat-input(autocomplete="off")
             button.chat-send-btn Send
-            
+
     script(src="/socket.io/socket.io.js")
-    script(src="/js/chat.js" data-user-id=user._id data-username=user.username) 
-   
+    script(src="/js/chat.js" data-user-id=user._id data-username=user.username)

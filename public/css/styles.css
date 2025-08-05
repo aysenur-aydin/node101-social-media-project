@@ -194,6 +194,10 @@ ul.horizontal {
   cursor: pointer;
 }
 
+.chat-card.active {
+  background-color: #3e3f4c;
+}
+
 .chat-avatar {
   width: 40px;
   height: 40px;
