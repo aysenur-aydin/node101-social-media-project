@@ -1,24 +1,20 @@
+import { createServer } from 'node:http';
 import express from 'express';
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import session from 'express-session';
-
-import { createServer } from 'node:http';
-
 import { Server } from 'socket.io';
 
+import { DATABASE_URI, PORT } from './config.js';
+import { sessionMiddleware } from './middlewares/session.js';
+
 import authRoutes from './routes/auth.js';
+import chatRoutes from './routes/chat.js';
 import postRoutes from './routes/post.js';
 import profileRoutes from './routes/profile.js';
-import chatRoutes from './routes/chat.js';
 
+import Message from './models/message.js';
 import Post from './models/post.js';
 import User from './models/user.js';
-import Message from './models/message.js';
-
-// for .env file
-dotenv.config();
 
 // express app
 const app = express();
@@ -26,14 +22,8 @@ const app = express();
 // http server
 const server = createServer(app);
 
-// connect to mongodb
-const dbURI = process.env.MONGODB_URI;
-
-// server port
-const PORT = process.env.SERVER_PORT;
-
 mongoose
-  .connect(dbURI)
+  .connect(DATABASE_URI)
   .then(() => {
     // socket.io works in server, dont use app! be careful !
     server.listen(PORT, () => {
@@ -48,18 +38,7 @@ app.set('view engine', 'pug');
 // middleware & static files
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true })); //  parses incoming HTML form data and makes it available under req.body
-app.use(morgan('dev')); // logs HTTP requests in development-friendly format
-
-// session middleware
-const sessionMiddleware = session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false, // false is for development (http)
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
-  },
-});
+app.use(morgan('dev'));
 
 app.use(sessionMiddleware);
 
