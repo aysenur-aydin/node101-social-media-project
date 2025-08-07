@@ -4,7 +4,7 @@ import Message from '../models/message.js';
 
 const onlineUsers = new Map();
 
-export default function setupSocket(server, sessionMiddleware) {
+export default function initializeSocket(server, sessionMiddleware) {
   const io = new Server(server);
 
   io.use((socket, next) => {
