@@ -2,6 +2,8 @@ import { Server } from 'socket.io';
 
 import Message from '../models/message.js';
 
+import { PRIVATE_MESSAGE, NEW_PRIVATE_MESSAGE } from '../public/shared/socketLib.js';
+
 const onlineUsers = new Map();
 
 export default function initializeSocket(server, sessionMiddleware) {
@@ -25,7 +27,7 @@ export default function initializeSocket(server, sessionMiddleware) {
 
     onlineUsers.set(senderUserId, socket.id);
 
-    socket.on('private_message', async ({ toUserId, message }) => {
+    socket.on(PRIVATE_MESSAGE, async ({ toUserId, message }) => {
       const newMessage = new Message({
         from: senderUserId,
         to: toUserId,
@@ -33,10 +35,9 @@ export default function initializeSocket(server, sessionMiddleware) {
       });
       await newMessage.save();
 
-      // Emit the message to the sender
       const receiverSocketId = onlineUsers.get(toUserId);
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit('new_private_message', {
+        io.to(receiverSocketId).emit(NEW_PRIVATE_MESSAGE, {
           fromUserId: senderUserId,
           fromUsername: senderUsername,
           isMine: false,
@@ -46,7 +47,7 @@ export default function initializeSocket(server, sessionMiddleware) {
       }
 
       // Emit the message to the sender
-      socket.emit('new_private_message', {
+      socket.emit(NEW_PRIVATE_MESSAGE, {
         fromUserId: senderUserId,
         fromUsername: senderUsername,
         isMine: true,

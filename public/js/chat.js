@@ -1,6 +1,10 @@
+import { NEW_PRIVATE_MESSAGE, PRIVATE_MESSAGE } from '../shared/socketLib.js';
+
 const socket = io();
-const currentUserId = document.currentScript.getAttribute('data-user-id');
-const currentUsername = document.currentScript.getAttribute('data-username');
+const chatScript = document.getElementById('chat-script');
+const currentUserId = chatScript.getAttribute('data-user-id');
+const currentUsername = chatScript.getAttribute('data-username');
+
 const form = document.getElementById('chat-form');
 const input = document.getElementById('chat-input');
 const messageContainer = document.getElementById('messages-container');
@@ -44,14 +48,22 @@ form.addEventListener('submit', (e) => {
   const toUserId = form.dataset.toUserId;
 
   if (message.trim() !== '' && toUserId) {
-    socket.emit('private_message', { toUserId, message }, (serverResponse) => {
+    socket.emit(PRIVATE_MESSAGE, { toUserId, message }, (serverResponse) => {
       console.log('Server replied:', serverResponse);
     });
     input.value = '';
   }
 });
 
-socket.on('new_private_message', ({ fromUserId, fromUsername, isMine, message, createdAt }) => {
+document.querySelectorAll('.chat-card').forEach((element) => {
+  element.addEventListener('click', () => {
+    const toUserId = element.getAttribute('data-friend-id');
+    loadChatHistory(element, toUserId);
+    form.dataset.toUserId = toUserId;
+  });
+});
+
+socket.on(NEW_PRIVATE_MESSAGE, ({ fromUserId, fromUsername, isMine, message, createdAt }) => {
   if (!isMine && form.dataset.toUserId !== fromUserId) {
     console.log(`A new message arrived from: ${fromUserId}`);
     return;

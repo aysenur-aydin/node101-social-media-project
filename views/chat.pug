@@ -12,7 +12,7 @@ html
           ul.chat-history-list
             if friends.length > 0
               each friend in friends
-                li.chat-card(onClick=`loadChatHistory(this,'${friend._id}')`)
+                li.chat-card(data-friend-id=friend._id)
                   img.chat-avatar(src=friend.profileImage alt=friend.username)
                   span.chat-username= friend.username
             else
@@ -27,4 +27,4 @@ html
             button.chat-send-btn Send
 
     script(src="/socket.io/socket.io.js")
-    script(src="/js/chat.js" data-user-id=user._id data-username=user.username)
+    script#chat-script(src="/js/chat.js" type="module" data-user-id=user._id data-username=user.username)
